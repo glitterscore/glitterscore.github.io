@@ -85,8 +85,21 @@ export const useProfile = () => {
         .from('visual_settings')
         .select('*')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
+      
       if (error) throw error;
+      
+      // If no visual settings exist, create default ones
+      if (!data) {
+        const { data: newData, error: insertError } = await supabase
+          .from('visual_settings')
+          .insert({ user_id: user.id })
+          .select()
+          .single();
+        if (insertError) throw insertError;
+        return newData as VisualSettings;
+      }
+      
       return data as VisualSettings;
     },
     enabled: !!user,
