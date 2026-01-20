@@ -5,62 +5,47 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { SMART_LINKS, getSmartLinkConfig, buildUrl } from '@/lib/smartLinks';
 import { 
   Link as LinkIcon, 
   Plus, 
   Trash2, 
   GripVertical,
   Loader2,
-  Save,
-  Twitter,
-  Instagram,
-  Youtube,
-  Github,
-  Music,
-  Globe,
-  Mail,
-  MessageCircle
+  Info
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-const ICONS = [
-  { value: 'link', label: 'Link', icon: LinkIcon },
-  { value: 'twitter', label: 'Twitter', icon: Twitter },
-  { value: 'instagram', label: 'Instagram', icon: Instagram },
-  { value: 'youtube', label: 'YouTube', icon: Youtube },
-  { value: 'github', label: 'GitHub', icon: Github },
-  { value: 'music', label: 'Music', icon: Music },
-  { value: 'globe', label: 'Website', icon: Globe },
-  { value: 'mail', label: 'Email', icon: Mail },
-  { value: 'discord', label: 'Discord', icon: MessageCircle },
-];
-
 export const LinksEditor = () => {
   const { links, addLink, updateLink, deleteLink } = useProfile();
-  const [newTitle, setNewTitle] = useState('');
-  const [newUrl, setNewUrl] = useState('');
-  const [newIcon, setNewIcon] = useState('link');
+  const [selectedPlatform, setSelectedPlatform] = useState('twitter');
+  const [inputValue, setInputValue] = useState('');
+  const [customTitle, setCustomTitle] = useState('');
   const [adding, setAdding] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
+
+  const currentConfig = getSmartLinkConfig(selectedPlatform);
 
   const handleAddLink = async () => {
-    if (!newTitle || !newUrl) {
-      toast.error('Please fill in both title and URL');
+    if (!inputValue || !currentConfig) {
+      toast.error('Please enter a value');
       return;
     }
 
     setAdding(true);
     try {
+      const url = buildUrl(currentConfig, inputValue);
+      const title = customTitle || currentConfig.label;
+      
       await addLink.mutateAsync({
-        title: newTitle,
-        url: newUrl.startsWith('http') ? newUrl : `https://${newUrl}`,
-        icon: newIcon,
+        title,
+        url,
+        icon: selectedPlatform,
         sort_order: (links?.length || 0) + 1,
         is_enabled: true,
       });
-      setNewTitle('');
-      setNewUrl('');
-      setNewIcon('link');
+      
+      setInputValue('');
+      setCustomTitle('');
       toast.success('Link added!');
     } catch (error) {
       toast.error('Failed to add link');
@@ -89,8 +74,8 @@ export const LinksEditor = () => {
   };
 
   const getIconComponent = (iconName: string) => {
-    const iconData = ICONS.find(i => i.value === iconName);
-    return iconData?.icon || LinkIcon;
+    const config = SMART_LINKS.find(sl => sl.value === iconName);
+    return config?.icon || LinkIcon;
   };
 
   return (
@@ -99,22 +84,26 @@ export const LinksEditor = () => {
       <div className="glass p-6 rounded-xl">
         <div className="flex items-center gap-3 mb-6">
           <Plus className="w-5 h-5 text-primary" />
-          <h2 className="text-xl font-semibold">Add New Link</h2>
+          <h2 className="text-xl font-semibold">Add Smart Link</h2>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="space-y-4">
+          {/* Platform Selector */}
           <div className="space-y-2">
-            <Label>Icon</Label>
-            <Select value={newIcon} onValueChange={setNewIcon}>
+            <Label>Platform</Label>
+            <Select value={selectedPlatform} onValueChange={(val) => {
+              setSelectedPlatform(val);
+              setInputValue('');
+            }}>
               <SelectTrigger className="input-cyber">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-popover border-border">
-                {ICONS.map((icon) => (
-                  <SelectItem key={icon.value} value={icon.value}>
+              <SelectContent className="bg-popover border-border max-h-64">
+                {SMART_LINKS.map((platform) => (
+                  <SelectItem key={platform.value} value={platform.value}>
                     <div className="flex items-center gap-2">
-                      <icon.icon className="w-4 h-4" />
-                      {icon.label}
+                      <platform.icon className="w-4 h-4" />
+                      {platform.label}
                     </div>
                   </SelectItem>
                 ))}
@@ -122,32 +111,64 @@ export const LinksEditor = () => {
             </Select>
           </div>
 
+          {/* Smart Input */}
           <div className="space-y-2">
-            <Label>Title</Label>
+            <Label className="flex items-center gap-2">
+              {currentConfig?.inputType === 'username' && 'Username'}
+              {currentConfig?.inputType === 'id' && 'User ID'}
+              {currentConfig?.inputType === 'url' && 'URL'}
+              {currentConfig?.inputType === 'email' && 'Email'}
+            </Label>
+            <div className="relative">
+              {currentConfig?.inputType === 'username' && (
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">@</span>
+              )}
+              <Input
+                placeholder={currentConfig?.placeholder}
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                className={`input-cyber ${currentConfig?.inputType === 'username' ? 'pl-8' : ''}`}
+              />
+            </div>
+            {currentConfig && (
+              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                <Info className="w-3 h-3" />
+                {currentConfig.description}
+                {currentConfig.copyAction && (
+                  <span className="text-primary ml-1">(Copies to clipboard on click)</span>
+                )}
+              </p>
+            )}
+          </div>
+
+          {/* Custom Title (Optional) */}
+          <div className="space-y-2">
+            <Label>Custom Title (optional)</Label>
             <Input
-              placeholder="My Website"
-              value={newTitle}
-              onChange={(e) => setNewTitle(e.target.value)}
+              placeholder={currentConfig?.label || 'Link title'}
+              value={customTitle}
+              onChange={(e) => setCustomTitle(e.target.value)}
               className="input-cyber"
             />
           </div>
 
-          <div className="space-y-2">
-            <Label>URL</Label>
-            <Input
-              placeholder="https://example.com"
-              value={newUrl}
-              onChange={(e) => setNewUrl(e.target.value)}
-              className="input-cyber"
-            />
-          </div>
+          {/* Preview */}
+          {inputValue && currentConfig && (
+            <div className="p-3 rounded-lg bg-secondary/30 border border-border">
+              <p className="text-xs text-muted-foreground mb-1">Preview:</p>
+              <p className="text-sm font-mono text-primary truncate">
+                {currentConfig.copyAction 
+                  ? `Copy: ${inputValue}` 
+                  : buildUrl(currentConfig, inputValue)
+                }
+              </p>
+            </div>
+          )}
 
-          <div className="flex items-end">
-            <Button onClick={handleAddLink} disabled={adding} variant="cyber" className="w-full">
-              {adding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-              Add
-            </Button>
-          </div>
+          <Button onClick={handleAddLink} disabled={adding} variant="cyber" className="w-full">
+            {adding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+            Add Link
+          </Button>
         </div>
       </div>
 
@@ -168,6 +189,7 @@ export const LinksEditor = () => {
           <div className="space-y-3">
             {links?.map((link) => {
               const IconComponent = getIconComponent(link.icon);
+              const config = getSmartLinkConfig(link.icon);
               
               return (
                 <div
@@ -186,7 +208,9 @@ export const LinksEditor = () => {
 
                   <div className="flex-grow min-w-0">
                     <p className="font-medium truncate">{link.title}</p>
-                    <p className="text-sm text-muted-foreground truncate">{link.url}</p>
+                    <p className="text-sm text-muted-foreground truncate">
+                      {config?.copyAction ? `ID: ${link.url}` : link.url}
+                    </p>
                   </div>
 
                   <Switch
