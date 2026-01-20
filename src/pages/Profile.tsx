@@ -3,39 +3,22 @@ import { usePublicProfile } from '@/hooks/useProfile';
 import { ParticleBackground } from '@/components/effects/ParticleBackground';
 import { Snowfall } from '@/components/effects/Snowfall';
 import { GlowEffect } from '@/components/effects/GlowEffect';
+import { ProfileLinks } from '@/components/profile/ProfileLinks';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { 
   Link as LinkIcon, 
-  ExternalLink,
   CheckCircle,
   Star,
   Crown,
   Code,
   Handshake,
-  Twitter,
-  Instagram,
-  Youtube,
-  Github,
-  Music,
-  Globe,
-  Mail,
-  MessageCircle,
   Loader2,
   Zap
 } from 'lucide-react';
 import NotFound from './NotFound';
 
-const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-  'link': LinkIcon,
-  'twitter': Twitter,
-  'instagram': Instagram,
-  'youtube': Youtube,
-  'github': Github,
-  'music': Music,
-  'globe': Globe,
-  'mail': Mail,
-  'discord': MessageCircle,
+const badgeIconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   'check-circle': CheckCircle,
   'star': Star,
   'crown': Crown,
@@ -174,7 +157,7 @@ const Profile = () => {
                     {displayedBadges.length > 0 && (
                       <div className="flex items-center gap-1">
                         {displayedBadges.slice(0, 3).map((ub) => {
-                          const IconComponent = iconMap[ub.badge?.icon || 'star'] || Star;
+                          const IconComponent = badgeIconMap[ub.badge?.icon || 'star'] || Star;
                           return (
                             <Tooltip key={ub.id}>
                               <TooltipTrigger>
@@ -222,52 +205,10 @@ const Profile = () => {
                   </div>
                 </div>
 
-                {/* Links */}
-                <div className="space-y-3">
-                  {links?.map((link, index) => {
-                    const IconComponent = iconMap[link.icon] || LinkIcon;
-                    
-                    return (
-                      <a
-                        key={link.id}
-                        href={link.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group relative block"
-                        style={{ animationDelay: `${index * 0.1}s` }}
-                      >
-                        {/* Hover glow */}
-                        <div className="absolute -inset-0.5 bg-gradient-to-r from-primary to-accent rounded-xl opacity-0 group-hover:opacity-30 blur transition-all duration-300" />
-                        
-                        <div className="relative flex items-center gap-4 p-4 rounded-xl bg-secondary/30 border border-border group-hover:border-primary/50 group-hover:bg-secondary/50 transition-all duration-300">
-                          {/* Icon container */}
-                          <div className="relative">
-                            <div className="absolute inset-0 bg-primary/20 rounded-xl blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
-                            <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 border border-primary/20 flex items-center justify-center group-hover:border-primary/50 transition-colors">
-                              <IconComponent className="w-5 h-5 text-primary group-hover:scale-110 transition-transform" />
-                            </div>
-                          </div>
-                          
-                          {/* Title */}
-                          <span className="flex-grow font-medium group-hover:text-primary transition-colors">
-                            {link.title}
-                          </span>
-                          
-                          {/* Arrow */}
-                          <div className="flex items-center gap-2">
-                            <ExternalLink className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 group-hover:translate-x-0 -translate-x-2 transition-all" />
-                          </div>
-                          
-                          {/* Side accent */}
-                          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-0 bg-gradient-to-b from-primary to-accent rounded-r group-hover:h-8 transition-all duration-300" />
-                        </div>
-                      </a>
-                    );
-                  })}
-                </div>
-
-                {/* Empty state */}
-                {(!links || links.length === 0) && (
+                {/* Links - Icon Only Grid */}
+                {links && links.length > 0 ? (
+                  <ProfileLinks links={links} glowEffect={visualSettings?.effect_glow} />
+                ) : (
                   <div className="relative">
                     <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5 rounded-xl" />
                     <div className="relative p-8 rounded-xl border border-dashed border-primary/20 text-center">
