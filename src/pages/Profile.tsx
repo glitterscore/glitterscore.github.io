@@ -21,7 +21,8 @@ import {
   Globe,
   Mail,
   MessageCircle,
-  Loader2
+  Loader2,
+  Zap
 } from 'lucide-react';
 import NotFound from './NotFound';
 
@@ -49,7 +50,10 @@ const Profile = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <div className="relative">
+          <Loader2 className="w-12 h-12 animate-spin text-primary" />
+          <div className="absolute inset-0 blur-xl bg-primary/30 animate-pulse" />
+        </div>
       </div>
     );
   }
@@ -63,32 +67,45 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Background Effects */}
-      {visualSettings?.effect_particles && <ParticleBackground enabled />}
+      {visualSettings?.effect_particles && <ParticleBackground enabled count={40} />}
       {visualSettings?.effect_snowfall && <Snowfall enabled />}
       {visualSettings?.effect_glow && <GlowEffect enabled />}
       
       {/* Background Image/Video/Gradient */}
       {visualSettings?.background_type === 'image' && visualSettings.background_value && (
         <div 
-          className="fixed inset-0 bg-cover bg-center opacity-30"
+          className="fixed inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${visualSettings.background_value})` }}
-        />
+        >
+          <div className="absolute inset-0 bg-background/70 backdrop-blur-sm" />
+        </div>
       )}
       {visualSettings?.background_type === 'video' && visualSettings.background_value && (
-        <video 
-          className="fixed inset-0 w-full h-full object-cover opacity-30"
-          src={visualSettings.background_value}
-          autoPlay
-          loop
-          muted
-        />
+        <>
+          <video 
+            className="fixed inset-0 w-full h-full object-cover"
+            src={visualSettings.background_value}
+            autoPlay
+            loop
+            muted
+            playsInline
+          />
+          <div className="fixed inset-0 bg-background/60 backdrop-blur-sm" />
+        </>
       )}
 
       {/* Cyber grid overlay */}
-      <div className="fixed inset-0 bg-cyber-grid bg-cyber-grid opacity-20 pointer-events-none" />
+      <div className="fixed inset-0 bg-cyber-grid bg-cyber-grid opacity-10 pointer-events-none" />
 
       {/* Scanlines */}
-      <div className="fixed inset-0 scanlines pointer-events-none opacity-30" />
+      <div className="fixed inset-0 scanlines pointer-events-none opacity-20" />
+
+      {/* Animated gradient orbs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-accent/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
+      </div>
 
       {/* Background Audio */}
       {visualSettings?.background_audio_url && (
@@ -100,103 +117,182 @@ const Profile = () => {
       )}
 
       {/* Main Content */}
-      <main className="relative z-10 min-h-screen flex flex-col items-center px-6 py-16">
-        <div className="w-full max-w-md stagger-children">
-          {/* Avatar */}
-          <div className="flex justify-center mb-6">
-            <div className={`relative ${visualSettings?.effect_glitch ? 'glitch' : ''}`}>
-              <Avatar className="w-28 h-28 border-4 border-primary/30 shadow-[0_0_30px_hsla(173,80%,50%,0.3)]">
-                <AvatarImage src={profile.avatar_url || ''} alt={profile.display_name || profile.username} />
-                <AvatarFallback className="bg-secondary text-3xl font-bold">
-                  {(profile.display_name || profile.username).charAt(0).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
+      <main className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 py-12">
+        <div className="w-full max-w-lg">
+          {/* Profile Card */}
+          <div className={`relative ${visualSettings?.effect_glitch ? 'glitch' : ''}`}>
+            {/* Outer glow ring */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-primary via-accent to-primary rounded-3xl opacity-30 blur-lg animate-pulse" />
+            
+            {/* Card Container */}
+            <div className="relative glass rounded-3xl overflow-hidden border border-primary/20">
+              {/* Top accent bar */}
+              <div className="h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
               
-              {/* Glow ring */}
-              <div className="absolute inset-0 rounded-full border-2 border-primary/50 animate-pulse" />
-            </div>
-          </div>
+              {/* Hex pattern overlay */}
+              <div className="absolute inset-0 opacity-5 pointer-events-none" 
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l25.98 15v30L30 60 4.02 45V15z' fill='none' stroke='%2300ffff' stroke-width='0.5'/%3E%3C/svg%3E")`,
+                  backgroundSize: '30px 30px'
+                }}
+              />
 
-          {/* Name & Badges */}
-          <div className="text-center mb-4">
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <h1 className={`text-2xl font-bold ${visualSettings?.effect_glow ? 'neon-text' : ''}`}>
-                {profile.display_name || profile.username}
-              </h1>
-              
-              {/* Badges */}
-              {displayedBadges.length > 0 && (
-                <div className="flex items-center gap-1">
-                  {displayedBadges.map((ub) => {
-                    const IconComponent = iconMap[ub.badge?.icon || 'star'] || Star;
+              <div className="relative p-8 pt-10">
+                {/* Avatar Section */}
+                <div className="flex justify-center mb-8">
+                  <div className="relative group">
+                    {/* Avatar ring effects */}
+                    <div className="absolute -inset-4 rounded-full bg-gradient-to-r from-primary via-accent to-primary opacity-50 blur-md group-hover:opacity-80 transition-opacity" />
+                    <div className="absolute -inset-2 rounded-full border-2 border-primary/30 animate-spin-slow" style={{ animationDuration: '10s' }} />
+                    <div className="absolute -inset-3 rounded-full border border-accent/20 animate-spin-slow" style={{ animationDuration: '15s', animationDirection: 'reverse' }} />
+                    
+                    {/* Main avatar */}
+                    <Avatar className="relative w-32 h-32 border-4 border-background shadow-2xl shadow-primary/30">
+                      <AvatarImage 
+                        src={profile.avatar_url || ''} 
+                        alt={profile.display_name || profile.username} 
+                        className="object-cover"
+                      />
+                      <AvatarFallback className="bg-gradient-to-br from-primary/30 to-accent/30 text-4xl font-bold">
+                        {(profile.display_name || profile.username).charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+
+                    {/* Status indicator */}
+                    <div className="absolute bottom-2 right-2 w-5 h-5 bg-primary rounded-full border-4 border-background shadow-lg shadow-primary/50" />
+                  </div>
+                </div>
+
+                {/* Name & Username */}
+                <div className="text-center mb-6">
+                  <div className="flex items-center justify-center gap-3 mb-2">
+                    <h1 className={`text-3xl font-bold tracking-tight ${visualSettings?.effect_glow ? 'neon-text' : ''}`}>
+                      {profile.display_name || profile.username}
+                    </h1>
+                    
+                    {/* Badges inline */}
+                    {displayedBadges.length > 0 && (
+                      <div className="flex items-center gap-1">
+                        {displayedBadges.slice(0, 3).map((ub) => {
+                          const IconComponent = iconMap[ub.badge?.icon || 'star'] || Star;
+                          return (
+                            <Tooltip key={ub.id}>
+                              <TooltipTrigger>
+                                <div className={`p-1.5 rounded-lg ${
+                                  ub.badge?.is_premium 
+                                    ? 'bg-gradient-to-br from-primary/20 to-accent/20 border border-primary/30 badge-premium' 
+                                    : 'bg-primary/10 border border-primary/30'
+                                }`}>
+                                  <IconComponent className={`w-4 h-4 ${ub.badge?.is_premium ? 'text-accent' : 'text-primary'}`} />
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent className="glass border-primary/30">
+                                <p className="font-medium">{ub.badge?.tooltip || ub.badge?.name}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          );
+                        })}
+                        {displayedBadges.length > 3 && (
+                          <span className="text-xs text-muted-foreground ml-1">+{displayedBadges.length - 3}</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  
+                  <p className="text-muted-foreground font-mono text-sm tracking-wider">
+                    <span className="text-primary/70">@</span>{profile.username}
+                  </p>
+                </div>
+
+                {/* Bio */}
+                {profile.bio && (
+                  <div className="relative mb-8">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent rounded-xl" />
+                    <p className="relative text-center text-muted-foreground px-4 py-3 leading-relaxed">
+                      {profile.bio}
+                    </p>
+                  </div>
+                )}
+
+                {/* Divider */}
+                <div className="relative h-px mb-8">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+                  <div className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-background rounded-full flex items-center justify-center border border-primary/30">
+                    <Zap className="w-4 h-4 text-primary" />
+                  </div>
+                </div>
+
+                {/* Links */}
+                <div className="space-y-3">
+                  {links?.map((link, index) => {
+                    const IconComponent = iconMap[link.icon] || LinkIcon;
+                    
                     return (
-                      <Tooltip key={ub.id}>
-                        <TooltipTrigger>
-                          <div className={`${ub.badge?.is_premium ? 'badge-premium' : ''}`}>
-                            <IconComponent className="w-5 h-5 text-primary" />
+                      <a
+                        key={link.id}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group relative block"
+                        style={{ animationDelay: `${index * 0.1}s` }}
+                      >
+                        {/* Hover glow */}
+                        <div className="absolute -inset-0.5 bg-gradient-to-r from-primary to-accent rounded-xl opacity-0 group-hover:opacity-30 blur transition-all duration-300" />
+                        
+                        <div className="relative flex items-center gap-4 p-4 rounded-xl bg-secondary/30 border border-border group-hover:border-primary/50 group-hover:bg-secondary/50 transition-all duration-300">
+                          {/* Icon container */}
+                          <div className="relative">
+                            <div className="absolute inset-0 bg-primary/20 rounded-xl blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 border border-primary/20 flex items-center justify-center group-hover:border-primary/50 transition-colors">
+                              <IconComponent className="w-5 h-5 text-primary group-hover:scale-110 transition-transform" />
+                            </div>
                           </div>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>{ub.badge?.tooltip || ub.badge?.name}</p>
-                        </TooltipContent>
-                      </Tooltip>
+                          
+                          {/* Title */}
+                          <span className="flex-grow font-medium group-hover:text-primary transition-colors">
+                            {link.title}
+                          </span>
+                          
+                          {/* Arrow */}
+                          <div className="flex items-center gap-2">
+                            <ExternalLink className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 group-hover:translate-x-0 -translate-x-2 transition-all" />
+                          </div>
+                          
+                          {/* Side accent */}
+                          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-0 bg-gradient-to-b from-primary to-accent rounded-r group-hover:h-8 transition-all duration-300" />
+                        </div>
+                      </a>
                     );
                   })}
                 </div>
-              )}
-            </div>
-            
-            <p className="text-muted-foreground text-sm">@{profile.username}</p>
-          </div>
 
-          {/* Bio */}
-          {profile.bio && (
-            <p className="text-center text-muted-foreground mb-8 max-w-sm mx-auto">
-              {profile.bio}
-            </p>
-          )}
-
-          {/* Links */}
-          <div className="space-y-3">
-            {links?.map((link) => {
-              const IconComponent = iconMap[link.icon] || LinkIcon;
-              
-              return (
-                <a
-                  key={link.id}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="link-card flex items-center gap-4 p-4 rounded-xl group"
-                >
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
-                    <IconComponent className="w-5 h-5 text-primary" />
+                {/* Empty state */}
+                {(!links || links.length === 0) && (
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5 rounded-xl" />
+                    <div className="relative p-8 rounded-xl border border-dashed border-primary/20 text-center">
+                      <LinkIcon className="w-10 h-10 text-muted-foreground/50 mx-auto mb-3" />
+                      <p className="text-muted-foreground text-sm">No links yet</p>
+                    </div>
                   </div>
-                  <span className="flex-grow font-medium">{link.title}</span>
-                  <ExternalLink className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-                </a>
-              );
-            })}
-          </div>
+                )}
+              </div>
 
-          {/* Empty state */}
-          {(!links || links.length === 0) && (
-            <div className="glass p-8 rounded-xl text-center">
-              <LinkIcon className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
-              <p className="text-muted-foreground">No links yet</p>
+              {/* Bottom accent */}
+              <div className="h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
             </div>
-          )}
+          </div>
 
           {/* Footer */}
-          <div className="mt-12 text-center">
+          <div className="mt-8 text-center">
             <a 
               href="/" 
-              className="inline-flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/30 border border-border text-xs text-muted-foreground hover:text-primary hover:border-primary/30 transition-all group"
             >
-              <div className="w-4 h-4 bg-primary/50 rounded flex items-center justify-center">
-                <span className="text-[8px] font-bold text-primary-foreground">V</span>
+              <div className="w-5 h-5 bg-gradient-to-br from-primary to-accent rounded flex items-center justify-center group-hover:shadow-lg group-hover:shadow-primary/30 transition-shadow">
+                <Zap className="w-3 h-3 text-primary-foreground" />
               </div>
-              VOID.LINK
+              <span className="font-mono tracking-wider">VOID.LINK</span>
             </a>
           </div>
         </div>
