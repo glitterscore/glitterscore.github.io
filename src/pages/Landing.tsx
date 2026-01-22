@@ -179,9 +179,8 @@ const Landing = () => {
             <span className="text-sm text-muted-foreground">© 2026 niggas.bio</span>
           </div>
           <div className="flex items-center gap-6 text-sm text-muted-foreground">
-            <a href="#" className="hover:text-foreground transition-colors">Discord</a>
+            <a href="https://discord.gg/HEyx6tKbET" className="hover:text-foreground transition-colors">Discord</a>
             <a href="mailto:support@niggas.bio" className="hover:text-foreground transition-colors">email</a>
-            <a href="#" className="hover:text-foreground transition-colors">Terms</a>
           </div>
         </div>
       </footer>

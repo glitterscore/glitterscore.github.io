@@ -153,7 +153,7 @@ const Register = () => {
           <div className="mt-6 pt-6 border-t border-border">
             <p className="text-xs text-center text-muted-foreground">
               Don't have an invite code?{' '}
-              <a href="#" className="text-accent hover:underline">
+              <a href="https://discord.gg/HEyx6tKbET" className="text-accent hover:underline">
                 Join our Discord
               </a>{' '}
               to request one.
