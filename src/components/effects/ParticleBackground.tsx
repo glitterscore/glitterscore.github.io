@@ -17,7 +17,7 @@ interface ParticleBackgroundProps {
 
 export const ParticleBackground = ({ 
   enabled = true, 
-  color = 'hsla(173, 80%, 50%, 0.6)',
+  color = 'hsla(173, 87%, 6%, 0.84)',
   count = 50 
 }: ParticleBackgroundProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -47,8 +47,8 @@ export const ParticleBackground = ({
       y: Math.random() * canvas.height,
       vx: (Math.random() - 0.5) * 0.5,
       vy: (Math.random() - 0.5) * 0.5,
-      size: Math.random() * 2 + 1,
-      opacity: Math.random() * 0.5 + 0.2,
+      size: Math.random() * 3 + 2,
+      opacity: Math.random() * 0.6 + 0.4,
     }));
 
     const animate = () => {
@@ -106,7 +106,7 @@ export const ParticleBackground = ({
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-0"
-      style={{ opacity: 0.6 }}
+      style={{ opacity: 0.8 }}
     />
   );
 };

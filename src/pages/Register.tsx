@@ -100,7 +100,7 @@ const Register = () => {
                 required
               />
               <p className="text-xs text-muted-foreground">
-                Your profile will be at void.link/{username || 'username'}
+                Your profile will be at niggas.bio/{username || 'username'}
               </p>
             </div>
 

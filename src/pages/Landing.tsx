@@ -12,28 +12,28 @@ const Landing = () => {
     {
       icon: Lock,
       title: 'Invite Only',
-      description: 'Exclusive access for creators who earn their spot.',
+      description: 'An exclusive network for those who refuse to be categorized.',
     },
     {
       icon: Palette,
-      title: 'Deep Customization',
-      description: 'Backgrounds, effects, audio — make it truly yours.',
+      title: 'Radical Customization',
+      description: 'Your profile, your rules. Total control over your digital identity.',
     },
     {
       icon: Sparkles,
-      title: 'Premium Badges',
-      description: 'Stand out with exclusive collectible badges.',
+      title: 'Signature Badges',
+      description: 'Unique, collectible badges to signify your status.',
     },
     {
       icon: Shield,
-      title: 'Underground Vibe',
-      description: 'Built for creators who move different.',
+      title: 'Stealth Mode',
+      description: 'For those who prefer to stay off the radar. Your data is your own.',
     },
   ];
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      <ParticleBackground enabled count={30} />
+      <ParticleBackground enabled count={150} />
       <GlowEffect enabled />
       
       {/* Cyber grid overlay */}
@@ -48,7 +48,7 @@ const Landing = () => {
           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
             <Zap className="w-5 h-5 text-primary-foreground" />
           </div>
-          <span className="text-xl font-bold tracking-tight">VOID.LINK</span>
+          <span className="text-xl font-bold tracking-tight">niggas.bio</span>
         </div>
         
         <div className="flex items-center gap-4">
@@ -75,26 +75,26 @@ const Landing = () => {
         </div>
 
         <h1 className="fade-in text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6 max-w-4xl" style={{ animationDelay: '0.1s' }}>
-          Your links.
+          Your presence.
           <br />
-          <span className="text-primary neon-text">Your rules.</span>
+          <span className="text-primary neon-text">Your control.</span>
         </h1>
 
         <p className="fade-in text-lg md:text-xl text-muted-foreground max-w-2xl mb-10" style={{ animationDelay: '0.2s' }}>
-          The most exclusive link-in-bio platform for creators who refuse to blend in. 
-          Custom effects, premium badges, and an underground community.
+          The link-in-bio for the digital underground. Built for creators, rebels, and iconoclasts 
+          who refuse to be just another node in the network.
         </p>
 
         <div className="fade-in flex flex-col sm:flex-row gap-4" style={{ animationDelay: '0.3s' }}>
           <Link to="/register">
             <Button variant="cyber" size="xl" className="group">
-              Request Access
+              Claim Your Space
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
             </Button>
           </Link>
-          <Link to="/demo">
+          <Link to="/1">
             <Button variant="outline" size="xl">
-              View Demo Profile
+              View a Profile
             </Button>
           </Link>
         </div>
@@ -102,15 +102,15 @@ const Landing = () => {
         {/* Stats */}
         <div className="fade-in grid grid-cols-3 gap-8 md:gap-16 mt-20" style={{ animationDelay: '0.4s' }}>
           <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bold text-primary neon-text">500+</div>
-            <div className="text-sm text-muted-foreground mt-1">Creators</div>
+            <div className="text-3xl md:text-4xl font-bold text-primary neon-text">???</div>
+            <div className="text-sm text-muted-foreground mt-1">Users</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bold text-accent neon-text-pink">50K+</div>
-            <div className="text-sm text-muted-foreground mt-1">Profile Views</div>
+            <div className="text-3xl md:text-4xl font-bold text-accent neon-text-pink">???</div>
+            <div className="text-sm text-muted-foreground mt-1">Links</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bold text-primary neon-text">99%</div>
+            <div className="text-3xl md:text-4xl font-bold text-primary neon-text">100%</div>
             <div className="text-sm text-muted-foreground mt-1">Uptime</div>
           </div>
         </div>
@@ -120,7 +120,7 @@ const Landing = () => {
       <section className="relative z-10 px-6 pb-32">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">
-            Built for the <span className="text-primary">underground</span>
+            Emerge from the <span className="text-primary">shadows</span>
           </h2>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -153,15 +153,15 @@ const Landing = () => {
             <div className="relative z-10">
               <Users className="w-12 h-12 text-primary mx-auto mb-6" />
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Ready to join the elite?
+                Ready to break away?
               </h2>
               <p className="text-muted-foreground mb-8 max-w-lg mx-auto">
-                Get your invite code and start building your presence. 
-                Premium badges available exclusively through Discord.
+                Request your invite. Start building your own corner of the web.
+                Limited spots available.
               </p>
               <Link to="/register">
                 <Button variant="neon" size="xl">
-                  Get Started
+                  Request Invite
                 </Button>
               </Link>
             </div>
@@ -176,11 +176,11 @@ const Landing = () => {
             <div className="w-6 h-6 bg-primary rounded flex items-center justify-center">
               <Zap className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="text-sm text-muted-foreground">© 2024 VOID.LINK</span>
+            <span className="text-sm text-muted-foreground">© 2026 niggas.bio</span>
           </div>
           <div className="flex items-center gap-6 text-sm text-muted-foreground">
             <a href="#" className="hover:text-foreground transition-colors">Discord</a>
-            <a href="#" className="hover:text-foreground transition-colors">Twitter</a>
+            <a href="mailto:support@niggas.bio" className="hover:text-foreground transition-colors">email</a>
             <a href="#" className="hover:text-foreground transition-colors">Terms</a>
           </div>
         </div>
